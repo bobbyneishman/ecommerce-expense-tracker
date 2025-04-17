@@ -6,6 +6,8 @@ const expenseDescriptionInput = document.getElementById('expense-description');
 const expenseCategoryInput = document.getElementById('expense-category');
 const expenseListBody = document.getElementById('expense-list-body');
 const totalExpensesDisplay = document.getElementById('total-expenses');
+// TODO: Add element selection for where the chart will go later, e.g.,
+// const chartContainer = document.getElementById('chart-container');
 
 // --- Application State (Data) ---
 let expenses = []; // Array to hold all expense objects
@@ -38,34 +40,53 @@ function formatCurrency(number) {
 }
 
 /**
+ * Aggregates expenses by category.
+ * @param {Array<object>} expensesArray - The array of expense objects.
+ * @returns {object} - An object where keys are categories and values are total amounts.
+ */
+function aggregateExpensesByCategory(expensesArray) {
+    const categoryTotals = {}; // Initialize an empty object to store totals
+
+    expensesArray.forEach(expense => {
+        const category = expense.category;
+        const amount = expense.amount; // Amount should already be a number here
+
+        if (categoryTotals[category]) {
+            // If category already exists, add to its total
+            categoryTotals[category] += amount;
+        } else {
+            // If category doesn't exist, initialize it
+            categoryTotals[category] = amount;
+        }
+    });
+
+    // --- DEBUG: Log the result of aggregation ---
+    console.log("Aggregated Category Totals:", categoryTotals);
+    return categoryTotals;
+}
+
+
+/**
  * Adds a single expense row to the HTML table.
- * IMPORTANT: Now takes an expense *object*.
  * @param {object} expense - The expense object {id, date, amount, description, category}
  */
 function addExpenseToTable(expense) {
     const newRow = document.createElement('tr');
-    // Add data-id attribute to the row for easier targeting later (e.g., for delete)
     newRow.setAttribute('data-id', expense.id);
 
     const dateCell = document.createElement('td');
     dateCell.textContent = expense.date;
-
     const amountCell = document.createElement('td');
     amountCell.textContent = formatCurrency(expense.amount);
-
     const descriptionCell = document.createElement('td');
     descriptionCell.textContent = expense.description;
-
     const categoryCell = document.createElement('td');
     categoryCell.textContent = expense.category;
-
     const actionsCell = document.createElement('td');
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
     deleteButton.classList.add('delete-btn');
-    // Add data-id to button too, makes delete handler simpler
     deleteButton.setAttribute('data-id', expense.id);
-    // TODO: Add event listener to deleteButton later
     actionsCell.appendChild(deleteButton);
 
     newRow.appendChild(dateCell);
@@ -81,7 +102,6 @@ function addExpenseToTable(expense) {
  * Recalculates total expenses from the expenses array and updates the display.
  */
 function calculateAndUpdateTotal() {
-    // Calculate total from the current expenses array
     totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     totalExpensesDisplay.textContent = totalExpenses.toFixed(2);
 }
@@ -90,47 +110,56 @@ function calculateAndUpdateTotal() {
  * Saves the current expenses array to Local Storage.
  */
 function saveExpenses() {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(expenses));
+    const expensesString = JSON.stringify(expenses);
+    try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, expensesString);
+    } catch (error) {
+        console.error('Error saving to Local Storage:', error);
+    }
 }
 
 /**
  * Loads expenses from Local Storage and updates the UI.
  */
 function loadExpenses() {
+    console.log(`Attempting to load from Local Storage (key: ${LOCAL_STORAGE_KEY})`);
     const savedExpensesString = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (savedExpensesString) {
         try {
-            expenses = JSON.parse(savedExpensesString);
-            // Ensure amounts are numbers (JSON can sometimes lose type info)
-            expenses.forEach(exp => exp.amount = parseFloat(exp.amount));
+            const parsedData = JSON.parse(savedExpensesString);
+            if (Array.isArray(parsedData)) {
+                expenses = parsedData;
+                expenses.forEach(exp => {
+                    exp.amount = parseFloat(exp.amount);
+                    if (isNaN(exp.amount)) {
+                        exp.amount = 0;
+                    }
+                });
+            } else { expenses = []; }
         } catch (error) {
-            console.error("Error parsing expenses from Local Storage:", error);
-            expenses = []; // Start fresh if data is corrupt
+            console.error("Error parsing expenses:", error);
+            expenses = [];
         }
     } else {
-        expenses = []; // No saved data, start with an empty array
+        expenses = [];
     }
 
-    // Clear any existing rows in the table body before adding loaded ones
     expenseListBody.innerHTML = '';
-
-    // Add each loaded expense to the table
-    expenses.forEach(expense => {
-        addExpenseToTable(expense);
-    });
-
-    // Calculate and display the total from loaded expenses
+    expenses.forEach(addExpenseToTable); // Use the function directly
     calculateAndUpdateTotal();
+
+    // --- Call aggregation after loading ---
+    aggregateExpensesByCategory(expenses);
+
+    // TODO: Call chart rendering function here later
 }
 
 // --- Event Listeners ---
 
-// Listen for the 'blur' event on the amount input
 expenseAmountInput.addEventListener('blur', function() {
     const currentValue = expenseAmountInput.value;
     const numericValue = parseCurrency(currentValue);
-
     if (!isNaN(numericValue)) {
         expenseAmountInput.value = formatCurrency(numericValue);
     } else if (currentValue.trim() === '') {
@@ -138,25 +167,20 @@ expenseAmountInput.addEventListener('blur', function() {
     }
 });
 
-// Listen for form submission
 expenseForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Get values
     const date = expenseDateInput.value;
     const amount = parseCurrency(expenseAmountInput.value);
     const description = expenseDescriptionInput.value;
     const category = expenseCategoryInput.value;
 
-    // Validation
     if (!date || isNaN(amount) || amount <= 0 || !description || !category) {
-        alert('Please fill out all fields correctly, ensuring Amount is a valid positive number.');
+        alert('Please fill out all fields correctly...');
         return;
     }
 
-    // Create a new expense object with a unique ID
     const newExpense = {
-        // Use timestamp for a simple unique ID (or crypto.randomUUID() if preferred)
         id: Date.now().toString(),
         date: date,
         amount: amount,
@@ -164,24 +188,20 @@ expenseForm.addEventListener('submit', function(event) {
         category: category
     };
 
-    // Add to the array
     expenses.push(newExpense);
-
-    // Add to the table display
     addExpenseToTable(newExpense);
-
-    // Update total display
     calculateAndUpdateTotal();
-
-    // Save the updated array to Local Storage
     saveExpenses();
 
-    // Clear the form
+    // --- Call aggregation after adding ---
+    aggregateExpensesByCategory(expenses);
+
+     // TODO: Call chart update function here later
+
     expenseForm.reset();
     expenseAmountInput.value = '';
 });
 
 // --- Initial Setup ---
-// Load expenses from local storage when the page loads
 loadExpenses();
-console.log('Expense Tracker Script Loaded and Ready! (v3 - with Local Storage)');
+console.log('Expense Tracker Script Loaded and Ready! (v4 - with aggregation)');
