@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css"> <!-- CSS Link -->
 </head>
 <body>
@@ -61,6 +62,15 @@
 
                 </form>
             </section>
+            
+<!-- Chart Section -->
+<section id="chart-section" class="content-card">
+    <h3>Spending Breakdown by Category</h3>
+    <div style="max-width: 400px; margin: auto;"> {/* Limit chart size and center */}
+        <canvas id="categoryPieChart"></canvas> {/* Canvas for Chart.js */}
+    </div>
+</section>
+<!-- End Chart Section -->
 
             <section id="expense-list-section" class="content-card">
                 <h3>Expenses</h3>
