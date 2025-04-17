@@ -3,86 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecommerce Expense Tracker</title>
-    <!-- We will link CSS file here later -->
-    <link rel="stylesheet" href="style.css">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css"> <!-- CSS Link -->
 </head>
 <body>
 
-    <header>
-        <h1>Ecommerce Expense Tracker</h1>
-    </header>
+    <div id="app-container">
 
-    <main>
-        <section id="expense-form-section">
-            <h2>Add New Expense</h2>
-            <form id="expense-form">
-                <div>
-                    <label for="expense-date">Date:</label>
-                    <input type="date" id="expense-date" required>
-                </div>
-                <div>
-                    <label for="expense-amount">Amount:</label>
-                    <input type="text" id="expense-amount" inputmode="decimal" placeholder="e.g., 49.99" required>
-                </div>
-                <div>
-                    <label for="expense-description">Vendor/Description:</label>
-                    <input type="text" id="expense-description" placeholder="e.g., Facebook Ads, Shopify Fee" required>
-                </div>
-                <div>
-                    <label for="expense-category">Category:</label>
-                    <select id="expense-category" required>
-                        <option value="" disabled selected>-- Select Category --</option>
-                        <option value="Advertising & Marketing">Advertising & Marketing</option>
-                        <option value="Platform Fees">Platform Fees</option>
-                        <option value="Shipping & Fulfillment">Shipping & Fulfillment</option>
-                        <option value="Software & Tools">Software & Tools</option>
-                        <option value="Cost of Goods Sold">Cost of Goods Sold</option> <!-- Kept it for now, can refine later -->
-                        <option value="Other/Miscellaneous">Other/Miscellaneous</option>
-                    </select>
-                </div>
-                <button type="submit">Add Expense</button>
-            </form>
-        </section>
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <h1 class="sidebar-title">Expenses</h1>
+            <ul>
+                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">Reports (Future)</a></li>
+                <li><a href="#">Settings (Future)</a></li>
+            </ul>
+        </nav>
 
-        <section id="expense-list-section">
-            <h2>Expenses</h2>
-            <div id="expense-summary">
-                <!-- Summary totals will go here (e.g., Total This Month: $XXX.XX) -->
-                <p>Total This Month: $<span id="total-expenses">0.00</span></p>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Actions</th> <!-- For delete buttons later -->
-                    </tr>
-                </thead>
-                <tbody id="expense-list-body">
-                    <!-- Expense rows will be added here by JavaScript -->
-                    <!-- Example row structure (for reference):
-                    <tr>
-                        <td>2023-10-27</td>
-                        <td>$49.99</td>
-                        <td>Facebook Ads</td>
-                        <td>Advertising & Marketing</td>
-                        <td><button>Delete</button></td>
-                    </tr>
-                     -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <header class="main-header">
+                <h2>Expense Dashboard</h2>
+            </header>
 
-    <footer>
-        <!-- Footer content can go here later -->
-    </footer>
+            <section id="expense-form-section" class="content-card">
+                <h3>Add New Expense</h3>
+                <form id="expense-form">
+                    <div class="form-grid"> {/* Using a grid for better form layout */}
+                        <div>
+                            <label for="expense-date">Date:</label>
+                            <input type="date" id="expense-date" required>
+                        </div>
+                        <div>
+                            <label for="expense-amount">Amount:</label>
+                            <input type="text" id="expense-amount" inputmode="decimal" placeholder="e.g., 49.99 or $49.99" required>
+                        </div>
+                        <div class="form-grid-span-2"> {/* Make description wider */}
+                            <label for="expense-description">Vendor/Description:</label>
+                            <input type="text" id="expense-description" placeholder="e.g., Facebook Ads, Shopify Fee" required>
+                        </div>
+                         <div>
+                            <label for="expense-category">Category:</label>
+                            <select id="expense-category" required>
+                                <option value="" disabled selected>-- Select Category --</option>
+                                <option value="Advertising & Marketing">Advertising & Marketing</option>
+                                <option value="Platform Fees">Platform Fees</option>
+                                <option value="Shipping & Fulfillment">Shipping & Fulfillment</option>
+                                <option value="Software & Tools">Software & Tools</option>
+                                <option value="Cost of Goods Sold">Cost of Goods Sold</option>
+                                <option value="Other/Miscellaneous">Other/Miscellaneous</option>
+                            </select>
+                        </div>
+                         <div class="form-button-area"> {/* Align button */}
+                             <button type="submit">Add Expense</button>
+                         </div>
+                    </div>
 
-    <!-- We will link JavaScript file here later -->
-    <script src="script.js"></script>
+                </form>
+            </section>
+
+            <section id="expense-list-section" class="content-card">
+                <h3>Expenses</h3>
+                <div id="expense-summary">
+                    <p>Total This Month: $<span id="total-expenses">0.00</span></p> {/* Might need better total calculation later */}
+                </div>
+                <div class="table-wrapper"> {/* Wrapper for potential horizontal scroll on small screens */}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-list-body">
+                            <!-- Expense rows will be added here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+    </div><!-- / #app-container -->
+
+    <script src="script.js"></script> <!-- JS Link -->
 
 </body>
 </html>
