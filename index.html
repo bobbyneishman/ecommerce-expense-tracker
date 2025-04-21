@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css"> <!-- CSS Link -->
 </head>
@@ -30,7 +33,7 @@
             <section id="expense-form-section" class="content-card">
                 <h3>Add New Expense</h3>
                 <form id="expense-form">
-                    <div class="form-grid"> {/* Using a grid for better form layout */}
+                    <div class="form-grid">
                         <div>
                             <label for="expense-date">Date:</label>
                             <input type="date" id="expense-date" required>
@@ -39,7 +42,7 @@
                             <label for="expense-amount">Amount:</label>
                             <input type="text" id="expense-amount" inputmode="decimal" placeholder="e.g., 49.99 or $49.99" required>
                         </div>
-                        <div class="form-grid-span-2"> {/* Make description wider */}
+                        <div class="form-grid-span-2"> 
                             <label for="expense-description">Vendor/Description:</label>
                             <input type="text" id="expense-description" placeholder="e.g., Facebook Ads, Shopify Fee" required>
                         </div>
@@ -62,12 +65,12 @@
 
                 </form>
             </section>
-            
+
 <!-- Chart Section -->
 <section id="chart-section" class="content-card">
     <h3>Spending Breakdown by Category</h3>
-    <div style="max-width: 400px; margin: auto;"> {/* Limit chart size and center */}
-        <canvas id="categoryPieChart"></canvas> {/* Canvas for Chart.js */}
+    <div style="max-width: 400px; margin: auto;">
+        <canvas id="categoryPieChart"></canvas>
     </div>
 </section>
 <!-- End Chart Section -->
@@ -77,7 +80,7 @@
                 <div id="expense-summary">
                     <p>Total This Month: $<span id="total-expenses">0.00</span></p> {/* Might need better total calculation later */}
                 </div>
-                <div class="table-wrapper"> {/* Wrapper for potential horizontal scroll on small screens */}
+                <div class="table-wrapper"> 
                     <table>
                         <thead>
                             <tr>
